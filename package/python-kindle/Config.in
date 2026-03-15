@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_KINDLE
+	bool "python-kindle"
+	select BR2_PACKAGE_PYTHON_CFFI
+	help
+	  Python cFFI bindings for Kindle.
+
+	  https://github.com/katadelos/python-kindle
