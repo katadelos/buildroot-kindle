@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_FBINK
+	bool "python-fbink"
+	select BR2_PACKAGE_FBINK
+	select BR2_PACKAGE_PYTHON_CFFI
+	help
+	  Python cFFI bindings for FBInk.
+	  FBInk is a small utility & library to print text & images to an eInk Linux framebuffer
+
+	  https://github.com/NiLuJe/py-fbink
