@@ -63,6 +63,9 @@ TARGET_EXCLUDEPATHS="/lib/firmware"
 declare -a sanitize_extra_args
 rootdir=
 
+# Special paths to retain in RPATH if present
+PRESERVE_RPATH_PATHS="/mnt/us/buildroot/lib:/mnt/us/buildroot/usr/lib"
+
 patch_file() {
     local file="${1}"
 
@@ -71,6 +74,9 @@ patch_file() {
     if test $? -ne 0 ; then
         return 0
     fi
+
+    # Save original rpath for special path preservation
+    original_rpath="${rpath}"
 
     # make files writable if necessary
     changed="$(chmod -c u+w "${file}")"
@@ -89,6 +95,30 @@ patch_file() {
 
     # call patchelf to sanitize the rpath
     "${PATCHELF}" --make-rpath-relative "${rootdir}" "${sanitize_extra_args[@]}" "${file}"
+
+    # Preserve special paths if they were in the original rpath
+    new_rpath="$("${PATCHELF}" --print-rpath "${file}" 2>&1)"
+    final_rpath="${new_rpath}"
+    if echo "${original_rpath}" | grep -q "^/mnt/us/buildroot/lib:" || \
+       echo "${original_rpath}" | grep -q ":/mnt/us/buildroot/lib:" || \
+       echo "${original_rpath}" | grep -q ":/mnt/us/buildroot/lib$" || \
+       test "${original_rpath}" = "/mnt/us/buildroot/lib"; then
+        if echo "${final_rpath}" | grep -qv "/mnt/us/buildroot/lib"; then
+            final_rpath="/mnt/us/buildroot/lib${final_rpath:+:${final_rpath}}"
+        fi
+    fi
+    if echo "${original_rpath}" | grep -q "^/mnt/us/buildroot/usr/lib:" || \
+       echo "${original_rpath}" | grep -q ":/mnt/us/buildroot/usr/lib:" || \
+       echo "${original_rpath}" | grep -q ":/mnt/us/buildroot/usr/lib$" || \
+       test "${original_rpath}" = "/mnt/us/buildroot/usr/lib"; then
+        if echo "${final_rpath}" | grep -qv "/mnt/us/buildroot/usr/lib"; then
+            final_rpath="/mnt/us/buildroot/usr/lib${final_rpath:+:${final_rpath}}"
+        fi
+    fi
+    if test "${final_rpath}" != "${new_rpath}" ; then
+        "${PATCHELF}" --set-rpath "${final_rpath}" "${file}"
+    fi
+
     # restore the original permission
     test "${changed}" != "" && chmod u-w "${file}"
 }
