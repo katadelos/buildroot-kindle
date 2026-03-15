@@ -1,0 +1,6 @@
+config BR2_PACKAGE_FBINK
+	bool "fbink"
+	help
+	  FBInk is a small utility & library to print text & images to an eInk Linux framebuffer
+
+	  https://github.com/NiLuJe/FBInk
