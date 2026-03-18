@@ -7,5 +7,7 @@ Disable math.h inlines to avoid __copysign redefinition with newer GCC.
   */
  
 +#define __NO_MATH_INLINES
- #include "math.h"
- #include "math_private.h"
++#define __copysign __glibc_copysign
++#include "math.h"
++#undef __copysign
++#include "math_private.h"
