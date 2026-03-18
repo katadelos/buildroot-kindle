@@ -112,6 +112,7 @@ endif
 GLIBC_CONF_ENV = \
 	ac_cv_path_BASH_SHELL=/bin/$(if $(BR2_PACKAGE_BASH),bash,sh) \
 	libc_cv_forced_unwind=yes \
+	libc_cv_c_cleanup=yes \
 	libc_cv_ssp=no
 
 # POSIX shell does not support localization, so remove the corresponding
