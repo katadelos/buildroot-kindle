@@ -805,6 +805,20 @@ config BR2_PER_PACKAGE_DIRECTORIES
 	  This is labeled as an experimental feature, as not all
 	  packages behave properly with per-package directories.
 
+config BR2_TARGET_PER_PACKAGE_DIRECTORIES
+	bool "Install target packages into per-package directories"
+	help
+	  This option creates a per-package target directory tree
+	  in the output directory. Each package gets its own
+	  directory, containing only the files installed by that
+	  package on the target.
+	  The directory is output/target-per-package/<pkg>/.
+
+	  This is useful to feed package managers such as OPKG.
+	  The per-package directories are generated from the
+	  per-package file lists, so files installed by overlays
+	  or post-build scripts are not included.
+
 endmenu
 
 config BR2_TIME_BITS_64

@@ -384,6 +384,12 @@ $(BUILD_DIR)/%/.stamp_installed:
 	@$(call pkg_size_after,$(BINARIES_DIR),-images)
 	@$(call pkg_size_after,$(HOST_DIR),-host)
 	@$(call check_bin_arch)
+	$(if $(BR2_TARGET_PER_PACKAGE_DIRECTORIES),\
+		$(if $(filter target,$($(PKG)_TYPE)),\
+			$(Q)$(TOPDIR)/support/scripts/copy-target-per-package \
+				"$(TARGET_DIR)" \
+				"$(TARGET_PER_PACKAGE_DIR)/$($(PKG)_NAME)" \
+				"$($(PKG)_DIR)/.files-list.txt"$(sep)))
 	$(Q)touch $@
 
 # Remove package sources
