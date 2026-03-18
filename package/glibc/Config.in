@@ -35,7 +35,7 @@ config BR2_PACKAGE_GLIBC_SUPPORTS
 	# Make sure to keep these dependencies in sync with the
 	# Config.in comments in
 	# toolchain/toolchain-buildroot/Config.in
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2 || BR2_PACKAGE_GLIBC_ALLOW_OLD_HEADERS
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_10 || !BR2_powerpc64le
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_19 || !BR2_loongarch64
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_5 || !BR2_MIPS_NAN_2008
@@ -55,6 +55,20 @@ config BR2_PACKAGE_GLIBC
 	select BR2_TOOLCHAIN_HAS_SSP if BR2_PACKAGE_HOST_BINUTILS_SUPPORTS_CFI
 	help
 	  https://www.gnu.org/software/libc/
+
+choice
+	prompt "glibc version"
+	default BR2_PACKAGE_GLIBC_VERSION_2_12 if BR2_PACKAGE_GLIBC_ALLOW_OLD_HEADERS
+	default BR2_PACKAGE_GLIBC_VERSION_LATEST
+
+config BR2_PACKAGE_GLIBC_VERSION_LATEST
+	bool "2.42 (git)"
+	depends on !BR2_PACKAGE_GLIBC_ALLOW_OLD_HEADERS
+
+config BR2_PACKAGE_GLIBC_VERSION_2_12
+	bool "2.12.2"
+
+endchoice
 
 config BR2_PACKAGE_GLIBC_KERNEL_COMPAT
 	bool "Enable compatibility shims to run on older kernels"

@@ -20,6 +20,12 @@ config BR2_TOOLCHAIN_BUILDROOT_VENDOR
 
 	  If you're not sure, just leave the default "buildroot" value.
 
+config BR2_PACKAGE_GLIBC_ALLOW_OLD_HEADERS
+	bool "Allow glibc with old (2.6.x) kernel headers"
+	help
+	  Enable this if you need to build an old glibc version against
+	  2.6.x kernel headers (e.g. for legacy targets).
+
 choice
 	prompt "C library"
 	default BR2_TOOLCHAIN_BUILDROOT_GLIBC
@@ -47,6 +53,7 @@ config BR2_TOOLCHAIN_BUILDROOT_GLIBC
 comment "glibc needs a toolchain w/ kernel headers >= 3.2"
 	depends on BR2_PACKAGE_GLIBC_ARCH_SUPPORTS
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2
+	depends on !BR2_PACKAGE_GLIBC_ALLOW_OLD_HEADERS
 
 comment "glibc on LoongArch64 needs a toolchain w/ headers >= 5.19"
 	depends on BR2_loongarch64
