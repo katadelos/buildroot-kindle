@@ -10,8 +10,9 @@ GLIBC_SITE = https://ftp.gnu.org/gnu/glibc
 GLIBC_SOURCE = glibc-$(GLIBC_VERSION).tar.bz2
 GLIBC_SITE_METHOD = wget
 GLIBC_LICENSE_FILES = COPYING COPYING.LIB
-GLIBC_PORTS_VERSION = 2.12.1
-GLIBC_EXTRA_DOWNLOADS = https://ftp.gnu.org/gnu/glibc/glibc-ports-$(GLIBC_PORTS_VERSION).tar.bz2
+GLIBC_PORTS_VERSION = 2.12.2
+GLIBC_PORTS_SITE = https://repository.timesys.com/buildsources/g/glibc/glibc-2.12.2
+GLIBC_EXTRA_DOWNLOADS = $(GLIBC_PORTS_SITE)/glibc-ports-$(GLIBC_PORTS_VERSION).tar.gz
 else
 # Generate version string using:
 #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
@@ -56,7 +57,7 @@ ifeq ($(BR2_PACKAGE_GLIBC_VERSION_2_12),y)
 define GLIBC_EXTRACT_PORTS
 	mkdir -p $(@D)/ports
 	$(TAR) -C $(@D)/ports --strip-components=1 \
-		-xf $(GLIBC_DL_DIR)/glibc-ports-$(GLIBC_PORTS_VERSION).tar.bz2
+		-xf $(GLIBC_DL_DIR)/glibc-ports-$(GLIBC_PORTS_VERSION).tar.gz
 endef
 GLIBC_POST_EXTRACT_HOOKS += GLIBC_EXTRACT_PORTS
 endif
