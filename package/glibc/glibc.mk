@@ -54,7 +54,9 @@ endif
 
 ifeq ($(BR2_PACKAGE_GLIBC_VERSION_2_12),y)
 define GLIBC_EXTRACT_PORTS
-	$(TAR) -C $(@D) -xf $(GLIBC_DL_DIR)/glibc-ports-$(GLIBC_PORTS_VERSION).tar.bz2
+	mkdir -p $(@D)/ports
+	$(TAR) -C $(@D)/ports --strip-components=1 \
+		-xf $(GLIBC_DL_DIR)/glibc-ports-$(GLIBC_PORTS_VERSION).tar.bz2
 endef
 GLIBC_POST_EXTRACT_HOOKS += GLIBC_EXTRACT_PORTS
 endif
