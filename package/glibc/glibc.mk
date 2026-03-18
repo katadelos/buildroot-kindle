@@ -115,6 +115,12 @@ GLIBC_CONF_ENV = \
 	libc_cv_c_cleanup=yes \
 	libc_cv_ssp=no
 
+# Ensure glibc's internal reconfigure during the build inherits the
+# same cache answers.
+GLIBC_MAKE_ENV += \
+	libc_cv_forced_unwind=yes \
+	libc_cv_c_cleanup=yes
+
 # POSIX shell does not support localization, so remove the corresponding
 # syntax from ldd if bash is not selected.
 ifeq ($(BR2_PACKAGE_BASH),)
