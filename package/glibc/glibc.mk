@@ -10,6 +10,8 @@ GLIBC_SITE = https://ftp.gnu.org/gnu/glibc
 GLIBC_SOURCE = glibc-$(GLIBC_VERSION).tar.bz2
 GLIBC_SITE_METHOD = wget
 GLIBC_LICENSE_FILES = COPYING COPYING.LIB
+GLIBC_PORTS_VERSION = 2.12.1
+GLIBC_EXTRA_DOWNLOADS = https://ftp.gnu.org/gnu/glibc/glibc-ports-$(GLIBC_PORTS_VERSION).tar.bz2
 else
 # Generate version string using:
 #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
@@ -30,6 +32,7 @@ GLIBC_CPE_ID_VERSION = $(word 1, $(subst -,$(space),$(GLIBC_VERSION)))
 # CVE ignores apply to the git-based 2.42 snapshot
 ifeq ($(BR2_PACKAGE_GLIBC_VERSION_2_12),y)
 GLIBC_IGNORE_CVES =
+GLIBC_CONF_OPTS += --enable-add-ons=ports,nptl
 else
 # Fixed by glibc-2.41-64-g1e16d0096d80a6e12d5bfa8e0aafdd13c47efd65
 GLIBC_IGNORE_CVES += CVE-2025-8058
@@ -47,6 +50,13 @@ GLIBC_IGNORE_CVES += CVE-2025-15281
 # upstream glibc:
 #  https://security-tracker.debian.org/tracker/CVE-2010-4756
 GLIBC_IGNORE_CVES += CVE-2010-4756
+endif
+
+ifeq ($(BR2_PACKAGE_GLIBC_VERSION_2_12),y)
+define GLIBC_EXTRACT_PORTS
+	$(TAR) -C $(@D) -xf $(DL_DIR)/glibc-ports-$(GLIBC_PORTS_VERSION).tar.bz2
+endef
+GLIBC_POST_EXTRACT_HOOKS += GLIBC_EXTRACT_PORTS
 endif
 
 # glibc is part of the toolchain so disable the toolchain dependency
@@ -126,7 +136,9 @@ GLIBC_MAKE = $(BR2_MAKE)
 GLIBC_CONF_ENV += ac_cv_prog_MAKE="$(BR2_MAKE)"
 
 ifeq ($(BR2_PACKAGE_GLIBC_KERNEL_COMPAT),)
+ifneq ($(call qstrip,$(BR2_TOOLCHAIN_HEADERS_AT_LEAST)),)
 GLIBC_CONF_OPTS += --enable-kernel=$(call qstrip,$(BR2_TOOLCHAIN_HEADERS_AT_LEAST))
+endif
 endif
 
 # Even though we use the autotools-package infrastructure, we have to
