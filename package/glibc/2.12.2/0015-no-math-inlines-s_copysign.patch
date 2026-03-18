@@ -2,12 +2,12 @@ Disable math.h inlines to avoid __copysign redefinition with newer GCC.
 
 --- a/sysdeps/ieee754/dbl-64/s_copysign.c
 +++ b/sysdeps/ieee754/dbl-64/s_copysign.c
-@@ -20,6 +20,7 @@
+@@ -23,8 +23,11 @@
   * with the sign bit of y.
   */
  
 +#define __NO_MATH_INLINES
 +#define __copysign __glibc_copysign
-+#include "math.h"
+ #include "math.h"
 +#undef __copysign
-+#include "math_private.h"
+ #include "math_private.h"
